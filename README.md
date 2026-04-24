@@ -1,10 +1,12 @@
 # YT Batch Downloader
 
+🔗 **Truy cập trực tuyến (Live Web):** [https://yt-batch-downloader.vercel.app/](https://yt-batch-downloader.vercel.app/)
+
 Một công cụ giao diện Web (Frontend-only) nhẹ nhàng, trực quan dùng để tạo kịch bản tải hàng loạt Video, Kênh, và Playlist từ YouTube bằng cách sử dụng công cụ lõi `yt-dlp` và `ffmpeg`.
 
 ## ✨ Tính năng nổi bật
 
-- **Chạy trực tiếp trên trình duyệt:** Không cần cài đặt phần mềm phức tạp, không cần server. Chỉ việc click đúp mở file `index.html` bằng bất kỳ trình duyệt nào (Chrome, Edge, Brave...) là dùng được ngay.
+- **Chạy trực tiếp trên trình duyệt:** Không cần cài đặt phần mềm phức tạp, không cần server. Chỉ việc truy cập link web hoặc mở file `index.html` bằng bất kỳ trình duyệt nào (Chrome, Edge, Brave...) là dùng được ngay.
 - **Tải hàng loạt dễ dàng:** Hỗ trợ nhập và xử lý hàng chục link Kênh, Playlist, hoặc Video lẻ cùng lúc.
 - **Chất lượng đa dạng:** Tùy chọn độ phân giải Cao nhất (thường là 4K), 1080p, 720p hoặc chỉ trích xuất Âm thanh (MP3).
 - **Tự động hóa toàn diện:** File `.bat` được sinh ra có khả năng tự động kiểm tra và tải các công cụ lõi như `yt-dlp.exe`, `ffmpeg.exe` (để ghép âm thanh/hình ảnh) và `node.exe` (dùng giải mã thuật toán EJS chống bot của YouTube) nếu máy chưa có.
@@ -18,7 +20,7 @@ Một công cụ giao diện Web (Frontend-only) nhẹ nhàng, trực quan dùng
 
 ## 🚀 Hướng dẫn sử dụng
 
-1. **Mở công cụ:** Mở file `index.html`.
+1. **Mở công cụ:** Truy cập vào link [https://yt-batch-downloader.vercel.app/](https://yt-batch-downloader.vercel.app/) hoặc tải mã nguồn về và mở file `index.html`.
 2. **Nhập URL:** Copy và Paste (Dán) các link YouTube cần tải vào khung nhập liệu bên trái (mỗi link nằm trên 1 dòng riêng biệt).
 3. **Cấu hình đường dẫn:**
    - Cung cấp đường dẫn tuyệt đối đến thư mục chứa công cụ và thư mục lưu video (VD: `D:\YT-Downloader`).
