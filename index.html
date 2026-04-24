@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YT Batch Downloader - Tải Video Hàng Loạt</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="icon" type="image/svg+xml" href="img/logo-pink.svg">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="logo-section">
+                <div class="logo-icon">
+                    <img src="img/logo-pink.svg" alt="YT Batch Downloader">
+                </div>
+                <div>
+                    <h1>YT Batch Downloader</h1>
+                    <p class="subtitle">Tải video hàng loạt từ YouTube</p>
+                </div>
+            </div>
+            <div class="header-actions">
+                <div class="header-status">
+                    <span class="status-dot"></span>
+                    <span>yt-dlp sẵn sàng</span>
+                </div>
+                <label class="theme-switch" title="Chuyển đổi Sáng/Tối">
+                    <input type="checkbox" id="themeToggle">
+                    <div class="theme-slider">
+                        <!-- Sun Icon -->
+                        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            width="14" height="14">
+                            <circle cx="12" cy="12" r="5"></circle>
+                            <line x1="12" y1="1" x2="12" y2="3"></line>
+                            <line x1="12" y1="21" x2="12" y2="23"></line>
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                            <line x1="1" y1="12" x2="3" y2="12"></line>
+                            <line x1="21" y1="12" x2="23" y2="12"></line>
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                        </svg>
+                        <!-- Moon Icon -->
+                        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            width="14" height="14">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                        </svg>
+                    </div>
+                </label>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Left Panel: Input -->
+            <section class="panel input-panel">
+                <div class="panel-header">
+                    <h2>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20"
+                            height="20">
+                            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                        </svg>
+                        Danh sách kênh / URL
+                    </h2>
+                    <span class="channel-count" id="channelCount">0 kênh</span>
+                </div>
+
+                <div class="input-area">
+                    <textarea id="urlInput"
+                        placeholder="Dán URL kênh YouTube vào đây, mỗi dòng một URL...&#10;&#10;Ví dụ:&#10;https://www.youtube.com/@TenKenh&#10;https://www.youtube.com/channel/UC...&#10;https://www.youtube.com/playlist?list=PL..."></textarea>
+                    <div class="input-actions">
+                        <button class="btn btn-secondary" id="btnClear" title="Xóa tất cả">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16"
+                                height="16">
+                                <polyline points="3 6 5 6 21 6"></polyline>
+                                <path
+                                    d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2">
+                                </path>
+                            </svg>
+                            Xóa
+                        </button>
+                        <button class="btn btn-secondary" id="btnPaste" title="Dán từ clipboard">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16"
+                                height="16">
+                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                            </svg>
+                            Dán
+                        </button>
+                        <button class="btn btn-secondary" id="btnLoadFile" title="Tải từ file txt">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16"
+                                height="16">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                            </svg>
+                            Tải file
+                        </button>
+                        <input type="file" id="fileInput" accept=".txt" style="display:none">
+                    </div>
+                </div>
+
+                <!-- URL List Preview -->
+                <div class="url-list" id="urlList"></div>
+            </section>
+
+            <!-- Right Panel: Settings -->
+            <section class="panel settings-panel">
+                <div class="panel-header">
+                    <h2>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20"
+                            height="20">
+                            <circle cx="12" cy="12" r="3"></circle>
+                            <path
+                                d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z">
+                            </path>
+                        </svg>
+                        Cài đặt tải xuống
+                    </h2>
+                </div>
+
+                <div class="settings-body">
+                    <!-- Tools Setup -->
+                    <div class="setting-group">
+                        <label class="setting-label">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14"
+                                height="14"
+                                style="display:inline;vertical-align:middle;margin-right:4px;color:var(--accent)">
+                                <path
+                                    d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z">
+                                </path>
+                            </svg>
+                            Công cụ cần thiết
+                        </label>
+                        <div class="input-with-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18"
+                                height="18">
+                                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z">
+                                </path>
+                            </svg>
+                            <input type="text" id="toolsFolder" value="C:\yt-dlp"
+                                placeholder="Thư mục chứa yt-dlp.exe & ffmpeg">
+                            <button class="btn-browse" id="btnBrowseTools" title="Chọn thư mục" type="button">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16"
+                                    height="16">
+                                    <path
+                                        d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z">
+                                    </path>
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="tools-download-row">
+                            <a href="https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp.exe"
+                                class="btn btn-tool-download" target="_blank" id="btnDownloadYtdlp">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16"
+                                    height="16">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                    <polyline points="7 10 12 15 17 10"></polyline>
+                                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                                </svg>
+                                Tải yt-dlp.exe
+                            </a>
+                            <a href="https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.zip"
+                                class="btn btn-tool-download" target="_blank" id="btnDownloadFfmpeg">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16"
+                                    height="16">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                    <polyline points="7 10 12 15 17 10"></polyline>
+                                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                                </svg>
+                                Tải ffmpeg.zip
+                            </a>
+                        </div>
+                        <label class="toggle-option">
+                            <input type="checkbox" id="optAutoInstall" checked>
+                            <span class="toggle-switch"></span>
+                            <span>Tự động tải công cụ nếu chưa có (trong file .bat)</span>
+                        </label>
+                        <p class="tools-hint">💡 Tải file về → giải nén → bỏ vào thư mục trên</p>
+                    </div>
+
+                    <!-- Quality -->
+                    <div class="setting-group">
+                        <label class="setting-label">Chất lượng video</label>
+                        <div class="radio-group" id="qualityGroup">
+                            <label class="radio-card active" data-value="best">
+                                <input type="radio" name="quality" value="best" checked>
+                                <div class="radio-icon">🎬</div>
+                                <div class="radio-text">
+                                    <strong>Cao nhất</strong>
+                                    <small>Video + Audio tốt nhất</small>
+                                </div>
+                            </label>
+                            <label class="radio-card" data-value="1080">
+                                <input type="radio" name="quality" value="1080">
+                                <div class="radio-icon">📺</div>
+                                <div class="radio-text">
+                                    <strong>1080p</strong>
+                                    <small>Full HD</small>
+                                </div>
+                            </label>
+                            <label class="radio-card" data-value="720">
+                                <input type="radio" name="quality" value="720">
+                                <div class="radio-icon">📱</div>
+                                <div class="radio-text">
+                                    <strong>720p</strong>
+                                    <small>HD tiết kiệm dung lượng</small>
+                                </div>
+                            </label>
+                            <label class="radio-card" data-value="audio">
+                                <input type="radio" name="quality" value="audio">
+                                <div class="radio-icon">🎵</div>
+                                <div class="radio-text">
+                                    <strong>Chỉ Audio</strong>
+                                    <small>MP3 / M4A</small>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Output folder -->
+                    <div class="setting-group">
+                        <label class="setting-label">Thư mục lưu</label>
+                        <div class="input-with-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18"
+                                height="18">
+                                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z">
+                                </path>
+                            </svg>
+                            <input type="text" id="outputFolder" value="G:\toolyoutube\downloads"
+                                placeholder="Thư mục lưu video">
+                            <button class="btn-browse" id="btnBrowseOutput" title="Chọn thư mục" type="button">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16"
+                                    height="16">
+                                    <path
+                                        d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z">
+                                    </path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Filename template -->
+                    <div class="setting-group">
+                        <label class="setting-label">Tên file</label>
+                        <select id="filenameTemplate" class="select-input">
+                            <option value="%(channel)s/%(title)s.%(ext)s">Kênh / Tên video</option>
+                            <option value="%(title)s.%(ext)s">Chỉ tên video</option>
+                            <option value="%(channel)s/%(upload_date)s - %(title)s.%(ext)s">Kênh / Ngày - Tên</option>
+                            <option value="%(playlist_index)s - %(title)s.%(ext)s">Số thứ tự - Tên</option>
+                        </select>
+                    </div>
+
+                    <!-- Advanced Options -->
+                    <div class="setting-group">
+                        <label class="setting-label">Tùy chọn nâng cao</label>
+                        <div class="toggle-options">
+                            <label class="toggle-option">
+                                <input type="checkbox" id="optSubtitle">
+                                <span class="toggle-switch"></span>
+                                <span>Tải phụ đề (nếu có)</span>
+                            </label>
+                            <label class="toggle-option">
+                                <input type="checkbox" id="optThumbnail">
+                                <span class="toggle-switch"></span>
+                                <span>Nhúng thumbnail</span>
+                            </label>
+                            <label class="toggle-option">
+                                <input type="checkbox" id="optMetadata">
+                                <span class="toggle-switch"></span>
+                                <span>Nhúng metadata</span>
+                            </label>
+                            <label class="toggle-option">
+                                <input type="checkbox" id="optArchive" checked>
+                                <span class="toggle-switch"></span>
+                                <span>Bỏ qua video đã tải (archive)</span>
+                            </label>
+                            <label class="toggle-option">
+                                <input type="checkbox" id="optPlaylistReverse">
+                                <span class="toggle-switch"></span>
+                                <span>Tải từ video cũ đến mới</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Retry & Sleep -->
+                    <div class="setting-group">
+                        <label class="setting-label">Kết nối</label>
+                        <div class="inline-settings">
+                            <div class="inline-setting">
+                                <label>Retries</label>
+                                <input type="number" id="retries" value="10" min="1" max="50">
+                            </div>
+                            <div class="inline-setting">
+                                <label>Fragment Retries</label>
+                                <input type="number" id="fragmentRetries" value="10" min="1" max="50">
+                            </div>
+                            <div class="inline-setting">
+                                <label>Sleep (giây)</label>
+                                <input type="number" id="sleepInterval" value="5" min="0" max="60">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Limit -->
+                    <div class="setting-group">
+                        <label class="setting-label">Giới hạn (để trống = tải hết)</label>
+                        <div class="inline-settings">
+                            <div class="inline-setting">
+                                <label>Số video tối đa</label>
+                                <input type="number" id="maxVideos" value="" min="1" placeholder="Tất cả">
+                            </div>
+                            <div class="inline-setting">
+                                <label>Từ ngày (YYYYMMDD)</label>
+                                <input type="text" id="dateAfter" value="" placeholder="VD: 20240101">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Command Preview -->
+                    <div class="setting-group">
+                        <label class="setting-label">Xem trước lệnh</label>
+                        <div class="command-preview" id="commandPreview">
+                            <span class="preview-label">Lệnh:</span>
+                            <code id="previewCode">Nhập URL để xem lệnh...</code>
+                            <button class="btn-copy" id="btnCopyCmd" title="Sao chép lệnh">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16"
+                                    height="16">
+                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="setting-group setting-actions">
+                        <button class="btn btn-outline btn-full" id="btnSaveBat">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18"
+                                height="18">
+                                <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                                <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                                <polyline points="7 3 7 8 15 8"></polyline>
+                            </svg>
+                            Tạo file .BAT
+                        </button>
+                        <button class="btn btn-primary btn-full" id="btnGenerate">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18"
+                                height="18">
+                                <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                            </svg>
+                            Tạo &amp; Chạy ngay
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+
+        <!-- Copyright Footer -->
+        <footer class="copyright-footer">
+            <p>© 2026 Bản quyền thuộc về <strong>Văn Hòa</strong></p>
+            <a href="https://www.facebook.com/vanhoa2622" target="_blank" rel="noopener noreferrer"
+                class="contact-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+                    <path
+                        d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z">
+                    </path>
+                </svg>
+                Liên hệ
+            </a>
+        </footer>
+    </div>
+
+    <!-- Toast notification -->
+    <div class="toast" id="toast"></div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
