@@ -22,10 +22,10 @@
 
     // Settings elements
     const toolsFolder = document.getElementById('toolsFolder');
-    const btnBrowseTools = document.getElementById('btnBrowseTools');
+    const btnPasteTools = document.getElementById('btnPasteTools');
     const optAutoInstall = document.getElementById('optAutoInstall');
     const outputFolder = document.getElementById('outputFolder');
-    const btnBrowseOutput = document.getElementById('btnBrowseOutput');
+    const btnPasteOutput = document.getElementById('btnPasteOutput');
     const filenameTemplate = document.getElementById('filenameTemplate');
     const retries = document.getElementById('retries');
     const fragmentRetries = document.getElementById('fragmentRetries');
@@ -37,6 +37,13 @@
     const optMetadata = document.getElementById('optMetadata');
     const optArchive = document.getElementById('optArchive');
     const optPlaylistReverse = document.getElementById('optPlaylistReverse');
+
+    const cookieMethod = document.getElementById('cookieMethod');
+    const cookieBrowserDiv = document.getElementById('cookieBrowserDiv');
+    const cookieTxtDiv = document.getElementById('cookieTxtDiv');
+    const browserCookies = document.getElementById('browserCookies');
+    const cookiesTxtPath = document.getElementById('cookiesTxtPath');
+    const btnPasteCookiesTxt = document.getElementById('btnPasteCookiesTxt');
 
     // ===== URL Parsing =====
     function parseUrls(text) {
@@ -94,7 +101,7 @@
     }
 
     // ===== Build yt-dlp Command =====
-    function buildCommand(url) {
+    function buildCommand(url, forBat = false) {
         const tp = getToolsPath().replace(/\\/g, '\\\\');
         const parts = [`"${tp}\\\\yt-dlp.exe"`];
 
@@ -142,6 +149,22 @@
             parts.push('--playlist-reverse');
         }
 
+        // Cookies
+        if (cookieMethod && cookieMethod.value === 'browser') {
+            if (browserCookies && browserCookies.value) {
+                if (browserCookies.value === 'coccoc') {
+                    parts.push('--cookies-from-browser', '"chrome:%LOCALAPPDATA%\\CocCoc\\Browser\\User Data"');
+                } else {
+                    parts.push('--cookies-from-browser', browserCookies.value);
+                }
+            }
+        } else if (cookieMethod && cookieMethod.value === 'txt') {
+            if (cookiesTxtPath && cookiesTxtPath.value) {
+                const cp = cookiesTxtPath.value.replace(/\\/g, '/').replace(/^"|"$/g, '');
+                parts.push('--cookies', `"${cp}"`);
+            }
+        }
+
         // Limits
         if (maxVideos.value) {
             parts.push('--max-downloads', maxVideos.value);
@@ -153,15 +176,20 @@
         // ffmpeg location
         parts.push('--ffmpeg-location', `"${tp}"`);
 
+        // EJS (External JavaScript) - node.js runtime & challenge solvers
+        parts.push('--js-runtimes', `"node:${tp}\\\\node.exe"`);
+        parts.push('--remote-components', 'ejs:github');
+
         // URL
         parts.push(`"${url}"`);
 
-        return parts.join(' ');
+        const cmdString = parts.join(' ');
+        return forBat ? cmdString.replace(/%/g, '%%') : cmdString;
     }
 
-    function buildAllCommands() {
+    function buildAllCommands(forBat = false) {
         const urls = parseUrls(urlInput.value);
-        return urls.map(url => buildCommand(url));
+        return urls.map(url => buildCommand(url, forBat));
     }
 
     function updateCommandPreview() {
@@ -175,7 +203,7 @@
 
     // ===== Generate BAT File Content =====
     function generateBatContent() {
-        const commands = buildAllCommands();
+        const commands = buildAllCommands(true);
         if (commands.length === 0) return null;
 
         const tp = getToolsPath();
@@ -184,6 +212,7 @@
             '@echo off',
             'chcp 65001 >nul',
             'title YT Batch Downloader',
+            `set "PATH=${tp};%PATH%"`,
             'color 0A',
             'echo.',
             'echo ╔══════════════════════════════════════════════════════════╗',
@@ -229,7 +258,20 @@
             lines.push('    )');
             lines.push(')');
             lines.push('');
+            lines.push(`if not exist "${tp}\\node.exe" (`);
+            lines.push('    echo [!] node.exe [Trinh chay JavaScript] chua co. Dang tai de giai ma YouTube...');
+            lines.push(`    powershell -Command "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; Invoke-WebRequest -Uri 'https://nodejs.org/dist/v20.12.2/win-x64/node.exe' -OutFile '${tp}\\node.exe'"`);
+            lines.push(`    if exist "${tp}\\node.exe" (`);
+            lines.push('        echo [OK] Đã tải node.exe thành công!');
+            lines.push('    ) else (');
+            lines.push('        echo [CẢNH BÁO] Không thể tải node.exe. Một số video có thể không tải được định dạng tốt nhất do giới hạn từ YouTube.');
+            lines.push('    )');
+            lines.push(')');
+            lines.push('');
             lines.push('echo [OK] Công cụ sẵn sàng!');
+            lines.push('echo ──────────────────────────────────────────────────────────');
+            lines.push('echo Dang kiem tra cap nhat yt-dlp...');
+            lines.push(`"${tp}\\yt-dlp.exe" -U`);
             lines.push('echo ──────────────────────────────────────────────────────────');
             lines.push('');
         }
@@ -322,6 +364,9 @@
     // Paste
     btnPaste.addEventListener('click', async () => {
         try {
+            if (!navigator.clipboard || !navigator.clipboard.readText) {
+                throw new Error('Clipboard API not available');
+            }
             const text = await navigator.clipboard.readText();
             if (urlInput.value.trim()) {
                 urlInput.value += '\n' + text;
@@ -331,7 +376,8 @@
             updateUrlList();
             showToast('Đã dán từ clipboard');
         } catch (err) {
-            showToast('Không thể đọc clipboard');
+            urlInput.focus();
+            showToast('Trình duyệt chặn đọc Clipboard. Hãy nhấn Ctrl+V để dán!');
         }
     });
 
@@ -362,7 +408,7 @@
 
     // Copy command
     btnCopyCmd.addEventListener('click', () => {
-        const commands = buildAllCommands();
+        const commands = buildAllCommands(false);
         if (commands.length === 0) {
             showToast('Chưa có URL nào!');
             return;
@@ -395,33 +441,55 @@
         showToast('File .BAT đã tạo! Double-click để chạy.');
     });
 
-    // ===== Browse Folder =====
-    async function handleBrowseFolder(targetInput) {
+    // ===== Paste Folder Path =====
+    async function handlePasteFolder(targetInput) {
         try {
-            if (window.showDirectoryPicker) {
-                const dirHandle = await window.showDirectoryPicker();
-                targetInput.value = dirHandle.name;
+            if (!navigator.clipboard || !navigator.clipboard.readText) {
+                throw new Error('Clipboard API not available');
+            }
+            const text = await navigator.clipboard.readText();
+            if (text) {
+                // Remove quotes if user used "Copy as path" in Windows
+                let cleanPath = text.replace(/^"|"$/g, '').trim();
+                targetInput.value = cleanPath;
                 targetInput.dispatchEvent(new Event('input'));
-                showToast(`Đã chọn: ${dirHandle.name} (Web chỉ lấy được tên thư mục)`);
+                showToast('Đã dán đường dẫn!');
             } else {
-                showToast('Trình duyệt của bạn không hỗ trợ chọn thư mục.');
+                showToast('Clipboard trống!');
             }
         } catch (err) {
-            // User cancelled
+            targetInput.focus();
+            targetInput.select();
+            showToast('Trình duyệt chặn đọc Clipboard. Hãy nhấn Ctrl+V để dán!');
         }
     }
 
-    if (btnBrowseTools) {
-        btnBrowseTools.addEventListener('click', () => handleBrowseFolder(toolsFolder));
+    if (btnPasteTools) {
+        btnPasteTools.addEventListener('click', () => handlePasteFolder(toolsFolder));
     }
-    if (btnBrowseOutput) {
-        btnBrowseOutput.addEventListener('click', () => handleBrowseFolder(outputFolder));
+    if (btnPasteOutput) {
+        btnPasteOutput.addEventListener('click', () => handlePasteFolder(outputFolder));
+    }
+    if (btnPasteCookiesTxt) {
+        btnPasteCookiesTxt.addEventListener('click', () => handlePasteFolder(cookiesTxtPath));
+    }
+
+    // Cookie visibility toggle
+    function updateCookieVisibility() {
+        if (!cookieMethod) return;
+        if (cookieBrowserDiv) cookieBrowserDiv.style.display = cookieMethod.value === 'browser' ? 'block' : 'none';
+        if (cookieTxtDiv) cookieTxtDiv.style.display = cookieMethod.value === 'txt' ? 'block' : 'none';
+        updateCommandPreview();
+    }
+    if (cookieMethod) {
+        cookieMethod.addEventListener('change', updateCookieVisibility);
     }
 
     // Settings change -> update preview
     [toolsFolder, outputFolder, filenameTemplate, retries, fragmentRetries, sleepInterval,
         maxVideos, dateAfter, optSubtitle, optThumbnail, optMetadata,
-        optArchive, optPlaylistReverse, optAutoInstall].forEach(el => {
+        optArchive, optPlaylistReverse, optAutoInstall, cookieMethod, browserCookies, cookiesTxtPath].forEach(el => {
+            if(!el) return;
             el.addEventListener('change', updateCommandPreview);
             if (el.type === 'text' || el.type === 'number') {
                 el.addEventListener('input', updateCommandPreview);
@@ -444,6 +512,9 @@
             optMetadata: optMetadata.checked,
             optArchive: optArchive.checked,
             optPlaylistReverse: optPlaylistReverse.checked,
+            cookieMethod: cookieMethod ? cookieMethod.value : '',
+            browserCookies: browserCookies ? browserCookies.value : '',
+            cookiesTxtPath: cookiesTxtPath ? cookiesTxtPath.value : '',
             urls: urlInput.value,
         };
         localStorage.setItem('ytbd-settings', JSON.stringify(settings));
@@ -474,6 +545,12 @@
             if (s.optMetadata !== undefined) optMetadata.checked = s.optMetadata;
             if (s.optArchive !== undefined) optArchive.checked = s.optArchive;
             if (s.optPlaylistReverse !== undefined) optPlaylistReverse.checked = s.optPlaylistReverse;
+            if (s.cookieMethod && cookieMethod) {
+                cookieMethod.value = s.cookieMethod;
+                updateCookieVisibility();
+            }
+            if (s.browserCookies && browserCookies) browserCookies.value = s.browserCookies;
+            if (s.cookiesTxtPath && cookiesTxtPath) cookiesTxtPath.value = s.cookiesTxtPath;
             if (s.urls) urlInput.value = s.urls;
             updateUrlList();
         } catch (e) {
@@ -522,6 +599,28 @@
     } else {
         const prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
         applyTheme(prefersLight);
+    }
+
+    // ===== Guide Modal =====
+    const btnGuideToggle = document.getElementById('btnGuideToggle');
+    const guideModal = document.getElementById('guideModal');
+    const btnCloseGuide = document.getElementById('btnCloseGuide');
+
+    if (btnGuideToggle && guideModal && btnCloseGuide) {
+        btnGuideToggle.addEventListener('click', () => {
+            guideModal.classList.add('show');
+        });
+
+        btnCloseGuide.addEventListener('click', () => {
+            guideModal.classList.remove('show');
+        });
+
+        // Close when clicking outside modal content
+        guideModal.addEventListener('click', (e) => {
+            if (e.target === guideModal) {
+                guideModal.classList.remove('show');
+            }
+        });
     }
 
 })();

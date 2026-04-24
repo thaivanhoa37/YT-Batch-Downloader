@@ -145,13 +145,12 @@
                                 </path>
                             </svg>
                             <input type="text" id="toolsFolder" value="C:\yt-dlp"
-                                placeholder="Thư mục chứa yt-dlp.exe & ffmpeg">
-                            <button class="btn-browse" id="btnBrowseTools" title="Chọn thư mục" type="button">
+                                placeholder="VD: C:\yt-dlp">
+                            <button class="btn-browse" id="btnPasteTools" title="Dán đường dẫn" type="button">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16"
                                     height="16">
-                                    <path
-                                        d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z">
-                                    </path>
+                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
                                 </svg>
                             </button>
                         </div>
@@ -182,7 +181,7 @@
                             <span class="toggle-switch"></span>
                             <span>Tự động tải công cụ nếu chưa có (trong file .bat)</span>
                         </label>
-                        <p class="tools-hint">💡 Tải file về → giải nén → bỏ vào thư mục trên</p>
+                        <p class="tools-hint">💡 Mẹo: Mở thư mục trên máy tính, copy đường dẫn và dùng nút <strong>Dán</strong></p>
                     </div>
 
                     <!-- Quality -->
@@ -234,13 +233,12 @@
                                 </path>
                             </svg>
                             <input type="text" id="outputFolder" value="G:\toolyoutube\downloads"
-                                placeholder="Thư mục lưu video">
-                            <button class="btn-browse" id="btnBrowseOutput" title="Chọn thư mục" type="button">
+                                placeholder="VD: D:\Video">
+                            <button class="btn-browse" id="btnPasteOutput" title="Dán đường dẫn" type="button">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16"
                                     height="16">
-                                    <path
-                                        d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z">
-                                    </path>
+                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
                                 </svg>
                             </button>
                         </div>
@@ -255,6 +253,56 @@
                             <option value="%(channel)s/%(upload_date)s - %(title)s.%(ext)s">Kênh / Ngày - Tên</option>
                             <option value="%(playlist_index)s - %(title)s.%(ext)s">Số thứ tự - Tên</option>
                         </select>
+                    </div>
+
+                    <!-- Authentication / Cookies -->
+                    <div class="setting-group">
+                        <label class="setting-label">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14" style="display:inline;vertical-align:middle;margin-right:4px;color:var(--accent)">
+                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                            </svg>
+                            Xác thực (Vượt lỗi bot YouTube)
+                        </label>
+                        <select id="cookieMethod" class="select-input" style="margin-bottom: 10px;">
+                            <option value="">Không dùng cookies (Mặc định)</option>
+                            <option value="browser">Lấy từ Trình duyệt (Chrome, Brave, Cốc Cốc...)</option>
+                            <option value="txt" selected>Dùng file cookies.txt (Khuyên dùng - Ổn định nhất)</option>
+                        </select>
+
+                        <div id="cookieBrowserDiv" style="display: none;">
+                            <select id="browserCookies" class="select-input">
+                                <option value="chrome">Google Chrome</option>
+                                <option value="coccoc">Cốc Cốc</option>
+                                <option value="edge">Microsoft Edge</option>
+                                <option value="firefox">Mozilla Firefox</option>
+                                <option value="brave" selected>Brave</option>
+                                <option value="opera">Opera</option>
+                                <option value="vivaldi">Vivaldi</option>
+                                <option value="safari">Safari</option>
+                            </select>
+                            <p class="tools-hint" style="margin-top: 8px; color: #ff6b6b;">⚠️ Lỗi "Could not copy cookie database": Do trình duyệt chạy ngầm hoặc bảo mật mới của Chromium. Hãy <strong>tắt hẳn trình duyệt</strong> (kể cả icon ở góc phải màn hình taskbar). Nếu vẫn lỗi, hãy chuyển sang dùng <strong>file cookies.txt</strong>!</p>
+                        </div>
+
+                        <div id="cookieTxtDiv">
+                            <div class="input-with-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                    <polyline points="14 2 14 8 20 8"></polyline>
+                                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                                    <polyline points="10 9 9 9 8 9"></polyline>
+                                </svg>
+                                <input type="text" id="cookiesTxtPath" value="C:\yt-dlp\cookies.txt" placeholder="VD: C:\yt-dlp\cookies.txt">
+                                <button class="btn-browse" id="btnPasteCookiesTxt" title="Dán đường dẫn" type="button">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                            <p class="tools-hint" style="margin-top: 8px;">💡 Mẹo: Cài tiện ích <a href="https://chromewebstore.google.com/detail/get-cookiestxt-locally/cclelndahbckbenkjhflpdbgdldlbecc" target="_blank" style="color:var(--primary);font-weight:bold;">Get cookies.txt LOCALLY</a> trên Chrome/Brave/Cốc Cốc. Mở YouTube, click vào tiện ích để tải file <code>cookies.txt</code>. Đổi tên file tải về thành <code>cookies.txt</code> và dán đường dẫn file vào ô trên.</p>
+                        </div>
                     </div>
 
                     <!-- Advanced Options -->
@@ -376,6 +424,99 @@
                 Liên hệ
             </a>
         </footer>
+    </div>
+
+    <!-- Floating Guide Button -->
+    <button class="floating-guide-btn" id="btnGuideToggle" title="Hướng dẫn sử dụng">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="28" height="28">
+            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+            <circle cx="12" cy="17" r="1" fill="currentColor" stroke="none"></circle>
+        </svg>
+    </button>
+
+    <!-- Guide Modal -->
+    <div class="guide-modal-overlay" id="guideModal">
+        <div class="guide-modal-content">
+            <div class="guide-modal-header">
+                <h2>Hướng dẫn sử dụng</h2>
+                <button class="btn-close-modal" id="btnCloseGuide">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="guide-modal-body">
+                <div class="guide-intro">
+                    <p>Chào mừng bạn đến với <strong>YT Batch Downloader</strong>. Công cụ này giúp bạn tải hàng loạt video, cả kênh hoặc toàn bộ playlist từ YouTube một cách tự động chỉ với vài cú click chuột.</p>
+                </div>
+
+                <div class="guide-section">
+                    <h3><span class="step-num">1</span> Lấy đường dẫn (URL) YouTube</h3>
+                    <p>Mở trình duyệt, truy cập vào YouTube và sao chép đường dẫn (URL) ở thanh địa chỉ. Sau đó dán vào ô nhập liệu bên trái màn hình. Bạn có thể nhập nhiều URL cùng lúc, <strong>mỗi URL nằm trên một dòng riêng biệt</strong>.</p>
+                    <div class="guide-note">
+                        <strong>Các định dạng URL hợp lệ:</strong>
+                        <ul>
+                            <li>🎬 <strong>Video lẻ:</strong> <code>https://www.youtube.com/watch?v=XXXXXX</code></li>
+                            <li>📺 <strong>Cả Kênh:</strong> <code>https://www.youtube.com/@TenKenh</code> (Sẽ tải toàn bộ video của kênh)</li>
+                            <li>📚 <strong>Playlist:</strong> <code>https://www.youtube.com/playlist?list=PLXXXXXX</code></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="guide-section">
+                    <h3><span class="step-num">2</span> Thư mục và Công cụ (yt-dlp &amp; ffmpeg)</h3>
+                    <p>Phần mềm này sử dụng sức mạnh của <strong>yt-dlp</strong> để tải và <strong>ffmpeg</strong> để ghép âm thanh/video chất lượng cao.</p>
+                    <ul>
+                        <li><strong>Cách dễ nhất:</strong> Chỉ cần tích chọn <strong>"Tự động tải công cụ..."</strong>. Khi chạy file hệ thống sẽ tự động tải các file này về máy (chỉ tải 1 lần đầu).</li>
+                        <li><strong>Thủ công:</strong> Nếu máy bạn đã tải sẵn yt-dlp và ffmpeg, hãy copy đường dẫn thư mục chứa chúng và dán vào ô <strong>"Công cụ cần thiết"</strong>.</li>
+                    </ul>
+                </div>
+
+                <div class="guide-section">
+                    <h3><span class="step-num">3</span> Tùy chỉnh chất lượng và Nơi lưu</h3>
+                    <ul>
+                        <li><strong>Chất lượng:</strong> Khuyến nghị chọn <strong>Cao nhất</strong> để tải video/audio tốt nhất rồi ghép lại. Để nhẹ máy, có thể chọn 1080p hoặc 720p. Nếu chỉ muốn nghe nhạc, chọn "Chỉ Audio (MP3)".</li>
+                        <li><strong>Thư mục lưu:</strong> Mở một thư mục trên máy tính của bạn (VD: <code>D:\Video</code>), copy đường dẫn và dán vào ô <strong>"Thư mục lưu"</strong>. Tool sẽ tự động tạo thư mục nếu nó chưa tồn tại.</li>
+                        <li>💡 <strong>Mẹo nhỏ:</strong> Nên tạo chung một thư mục gốc (VD: <code>D:\YT-Downloader</code>) và dán đường dẫn này cho cả <strong>"Thư mục công cụ"</strong> và <strong>"Thư mục lưu"</strong> để tất cả tập trung vào 1 folder cho gọn gàng, dễ quản lý.</li>
+                    </ul>
+                </div>
+
+                <div class="guide-section">
+                    <h3><span class="step-num">4</span> Khắc phục lỗi Bot YouTube (Rất quan trọng)</h3>
+                    <p style="margin-bottom: 8px;">Nếu gặp lỗi <code>Sign in to confirm...</code> hoặc <code>Could not copy cookie database</code>, bạn <strong>bắt buộc phải dùng file cookies.txt</strong>. Cách lấy file:</p>
+                    <ol>
+                        <li>Cài đặt tiện ích <a href="https://chromewebstore.google.com/detail/get-cookiestxt-locally/cclelndahbckbenkjhflpdbgdldlbecc" target="_blank" style="color:var(--primary);font-weight:bold;">Get cookies.txt LOCALLY</a> trên Chrome/Brave/Cốc Cốc/Edge.</li>
+                        <li>Mở tab mới, vào <strong>YouTube.com</strong> và đảm bảo tài khoản đã đăng nhập.</li>
+                        <li>Nhấn vào biểu tượng tiện ích ở góc phải trên cùng trình duyệt, chọn <strong>Export</strong> để tải file về.</li>
+                        <li>Lưu file vừa tải về và đổi tên thành <code>cookies.txt</code>. Sau đó <strong>Copy đường dẫn</strong> file này (VD: <code>C:\Downloads\cookies.txt</code>).</li>
+                        <li>Tại mục <strong>Xác thực</strong> của công cụ này, chọn <em>"Dùng file cookies.txt"</em> và dán đường dẫn vừa copy vào ô.</li>
+                    </ol>
+                </div>
+
+                <div class="guide-section">
+                    <h3><span class="step-num">5</span> Các tùy chọn nâng cao (Mẹo hay)</h3>
+                    <ul>
+                        <li>✨ <strong>Bỏ qua video đã tải (Archive):</strong> Rất quan trọng! Giúp bạn tải tiếp mà không lo bị trùng lặp. Nếu bạn tải dở 1 kênh bị mất mạng, chạy lại tool sẽ tự động bỏ qua video đã tải.</li>
+                        <li>✨ <strong>Giới hạn số lượng:</strong> Nếu chỉ muốn tải 5 video mới nhất, hãy nhập "5" vào ô <strong>Số video tối đa</strong>.</li>
+                        <li>✨ <strong>Nhúng Thumbnail &amp; Metadata:</strong> File tải về sẽ có sẵn ảnh bìa và thông tin video cực kỳ chuyên nghiệp.</li>
+                    </ul>
+                </div>
+
+                <div class="guide-section">
+                    <h3><span class="step-num">6</span> Bắt đầu tải video</h3>
+                    <p>Sau khi đã kiểm tra xong, bạn có 2 lựa chọn ở góc dưới cùng bên phải:</p>
+                    <ol>
+                        <li>Nhấn <strong>Tạo &amp; Chạy ngay</strong>: Trình duyệt sẽ tải về một file <code>.bat</code>. Bạn chỉ cần <strong>click đúp chuột</strong> để mở file này, cửa sổ CMD đen sẽ hiện lên và tự động chạy tiến trình tải.</li>
+                        <li>Nhấn <strong>Tạo file .BAT</strong>: Chỉ lưu file mã lệnh lại để bạn có thể gửi cho máy khác hoặc chạy vào lúc rảnh rỗi.</li>
+                    </ol>
+                </div>
+                
+                <div class="guide-footer">
+                    <p>💡 <em>Lưu ý: Cửa sổ màu đen khi chạy file .bat sẽ tự động tắt sau khi hoàn tất. Bạn có thể theo dõi tiến độ chi tiết (% tải, tốc độ, ETA) trực tiếp trên đó.</em></p>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Toast notification -->
